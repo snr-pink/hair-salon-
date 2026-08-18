@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}My appointments &mdash; Bella's Hair Studio{% endblock %}
+{% block content %}
+    <div class="section-title"><h2>My appointments</h2></div>
+
+    {% if appointments %}
+        {% for appt in appointments %}
+            <div class="ticket">
+                <div class="ticket-stub">
+                    <div class="day">{{ appt.date|date:"d" }}</div>
+                    <div class="month">{{ appt.date|date:"M Y" }}</div>
+                </div>
+                <div class="ticket-body">
+                    <div>
+                        <h3>{{ appt.service.name }} with {{ appt.stylist.name }}</h3>
+                        <div class="meta-line">{{ appt.start_time|time:"g:i A" }}&ndash;{{ appt.end_time|time:"g:i A" }}</div>
+                    </div>
+                    <div>
+                        <span class="status-pill status-{{ appt.status }}">{{ appt.get_status_display }}</span>
+                        {% if appt.status == 'PENDING' or appt.status == 'CONFIRMED' %}
+                            <form method="post" action="{% url 'cancel_appointment' appt.pk %}" class="inline-form">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-outline" style="margin-left:10px;">Cancel</button>
+                            </form>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    {% else %}
+        <div class="empty-state">
+            No appointments yet. <a href="{% url 'book_appointment' %}">Book your first one</a>.
+        </div>
+    {% endif %}
+{% endblock %}

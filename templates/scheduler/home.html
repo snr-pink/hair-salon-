@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Bella's Hair Studio &mdash; Book your appointment{% endblock %}
+{% block content %}
+    <section class="hero">
+        <h1>Effortless hair, easily booked.</h1>
+        <p>Pick a service, choose your stylist, and lock in a time that works for you &mdash; no phone calls, no waiting.</p>
+        {% if user.is_authenticated %}
+            <a href="{% url 'book_appointment' %}" class="btn btn-gold">Book an appointment</a>
+        {% else %}
+            <a href="{% url 'signup' %}" class="btn btn-gold">Create an account to book</a>
+        {% endif %}
+    </section>
+
+    <div class="section-title"><h2>Our services</h2></div>
+    {% if services %}
+        <div class="card-grid">
+            {% for service in services %}
+                <div class="card">
+                    <h3>{{ service.name }}</h3>
+                    <p>{{ service.description|default:"A signature Bella's treatment." }}</p>
+                    <div class="meta">{{ service.duration_minutes }} min &middot; &#8358;{{ service.price }}</div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-state">Services will be listed here once the studio adds them in the admin panel.</div>
+    {% endif %}
+
+    <div class="section-title"><h2>Meet the stylists</h2></div>
+    {% if stylists %}
+        <div class="card-grid">
+            {% for stylist in stylists %}
+                <div class="card">
+                    <h3>{{ stylist.name }}</h3>
+                    <p>{{ stylist.bio|default:"Ready to help you find your next look." }}</p>
+                    <div class="meta">Working hours: {{ stylist.work_start|time:"g:i A" }}&ndash;{{ stylist.work_end|time:"g:i A" }}</div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-state">Stylist profiles will be listed here once the studio adds them in the admin panel.</div>
+    {% endif %}
+{% endblock %}

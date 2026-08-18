@@ -1,0 +1,51 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Bella's Hair Studio{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Work+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <header class="site-header">
+        <div class="wrap header-inner">
+            <a class="brand" href="{% url 'home' %}">
+                <span class="brand-mark">&#10058;</span> Bella&rsquo;s Hair Studio
+            </a>
+            <nav class="site-nav">
+                <a href="{% url 'home' %}">Home</a>
+                {% if user.is_authenticated %}
+                    <a href="{% url 'book_appointment' %}">Book</a>
+                    <a href="{% url 'my_appointments' %}">My Appointments</a>
+                    {% if user.stylist_profile %}<a href="{% url 'stylist_schedule' %}">My Schedule</a>{% endif %}
+                    <form action="{% url 'logout' %}" method="post" class="inline-form">
+                        {% csrf_token %}
+                        <button type="submit" class="link-button">Log out ({{ user.username }})</button>
+                    </form>
+                {% else %}
+                    <a href="{% url 'login' %}">Log in</a>
+                    <a href="{% url 'signup' %}" class="cta-link">Book now</a>
+                {% endif %}
+            </nav>
+        </div>
+    </header>
+
+    <main class="wrap page">
+        {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                    <li class="message {{ message.tags }}">{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="site-footer">
+        <div class="wrap">&mdash; Bella&rsquo;s Hair Studio &middot; booked with care &mdash;</div>
+    </footer>
+</body>
+</html>

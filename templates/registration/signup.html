@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Create your account &mdash; Bella's Hair Studio{% endblock %}
+{% block content %}
+    <div class="section-title"><h2>Create your account</h2></div>
+    <div class="form-card">
+        <form method="post" class="stack">
+            {% csrf_token %}
+            {% if form.non_field_errors %}
+                <ul class="errorlist">{% for error in form.non_field_errors %}<li>{{ error }}</li>{% endfor %}</ul>
+            {% endif %}
+            {% for field in form %}
+                <p>
+                    <label for="{{ field.id_for_label }}">{{ field.label }}</label>
+                    {{ field }}
+                    {% if field.help_text %}<div class="helptext">{{ field.help_text }}</div>{% endif %}
+                    {% if field.errors %}<ul class="errorlist">{% for error in field.errors %}<li>{{ error }}</li>{% endfor %}</ul>{% endif %}
+                </p>
+            {% endfor %}
+            <button type="submit" class="btn btn-gold">Create account</button>
+        </form>
+        <p style="margin-top:16px;font-size:0.9rem;">Already have an account? <a href="{% url 'login' %}">Log in</a></p>
+    </div>
+{% endblock %}
