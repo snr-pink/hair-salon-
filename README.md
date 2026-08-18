@@ -47,6 +47,8 @@ hair_studio_scheduler/
    ```bash
    python manage.py createsuperuser
    ```
+   (Or, non-interactively: set `DJANGO_SUPERUSER_USERNAME`, `DJANGO_SUPERUSER_EMAIL`,
+   and `DJANGO_SUPERUSER_PASSWORD` and run `python manage.py create_default_superuser`.)
 6. Run the dev server:
    ```bash
    python manage.py runserver
@@ -91,15 +93,29 @@ configured for it (`Procfile`, `whitenoise`, `dj-database-url`, env-based settin
    | `DEBUG` | `False` |
    | `ALLOWED_HOSTS` | `<your-app-name>.onrender.com` (Render also shows you this) |
    | `DATABASE_URL` | paste the Internal Database URL from step 3 |
+   | `DJANGO_SUPERUSER_USERNAME` | whatever admin username you want |
+   | `DJANGO_SUPERUSER_EMAIL` | your email |
+   | `DJANGO_SUPERUSER_PASSWORD` | a strong password |
+
+   The last three are optional but recommended — see step 7 below. Render's free web
+   services don't include Shell access (that needs a paid instance type), so this is
+   how you get an admin account without it.
 
 6. **Deploy.** Click **Create Web Service**. Render will build and deploy automatically.
    Migrations run on release via the `Procfile`'s `release:` line.
 
-7. **Create your admin user on the live site.** In the Render dashboard, open your
-   Web Service → **Shell** tab, and run:
-   ```bash
-   python manage.py createsuperuser
-   ```
+7. **Your admin user is created automatically.** The `Procfile`'s release step also runs
+   `python manage.py create_default_superuser`, a small management command
+   (`scheduler/management/commands/create_default_superuser.py`) that reads the
+   `DJANGO_SUPERUSER_*` variables from step 5 and creates that admin account the first
+   time it runs — no Shell tab needed. It's safe to leave in place: on every future
+   deploy it just checks the user already exists and does nothing. If you ever want to
+   change the password, do it from `/admin/` while logged in, or update the
+   `DJANGO_SUPERUSER_PASSWORD` env var and manually delete the user from `/admin/` once
+   so it gets recreated with the new password on the next deploy.
+
+   (If you're on a paid Render plan with Shell access, you can still use
+   `python manage.py createsuperuser` interactively there instead if you prefer.)
 
 8. **Visit your live URL** — it'll be `https://<your-app-name>.onrender.com`.
 
